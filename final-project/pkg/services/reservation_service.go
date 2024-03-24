@@ -93,10 +93,22 @@ func (r *ReservationService) UpdateReservation(id int, request models.UpdateRese
 		return nil, errors.New("Unauthorized")
 	}
 
+	err = r.UpdateTableStatus(reservation.TableID, "available")
+
+	if err != nil {
+		return nil, err
+	}
+
 	reservation.Date = request.Date
 	reservation.TableID = request.TableID
 
 	err = r.gorm.Save(&reservation).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.UpdateTableStatus(request.TableID, "booked")
 
 	if err != nil {
 		return nil, err
