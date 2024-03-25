@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"final-project/pkg/models"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -139,18 +140,25 @@ func (r *ReservationService) DeleteReservation(id int, userId uint) error {
 		return errors.New("Unauthorized")
 	}
 
-	err = r.gorm.Delete(&models.Reservation{}, id).Error
+	now := time.Now()
 
-	if err != nil {
-		return err
+	if !now.After(reservation.Date){
+		err = r.gorm.Delete(&models.Reservation{}, id).Error
+
+		if err != nil {
+			return err
+		}
+
+		err = r.UpdateTableStatus(reservation.TableID, "available")
+
+		if err != nil {
+			return err
+		}
+
+	}else{
+		return errors.New("this reservation has finished")
 	}
-
-	err = r.UpdateTableStatus(reservation.TableID, "available")
-
-	if err != nil {
-		return err
-	}
-
+	
 	return nil
 }
 

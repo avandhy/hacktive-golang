@@ -7,7 +7,7 @@ type Reservation struct {
 	Name      string
 	Email     string
 	Phone     int
-	Date      string
+	Date      time.Time
 	TableID   int
 	UserID		uint
 	CreatedAt time.Time
@@ -18,13 +18,13 @@ type CreateReservationRequest struct{
 	Name		string
 	Email		string
 	Phone     	int
-	Date      	string
+	Date      	time.Time
 	TableID   	int
 	UserID		uint
 
 }
 
 type UpdateReservationRequest struct{
-	Date      string
+	Date      time.Time
 	TableID   int
 }
