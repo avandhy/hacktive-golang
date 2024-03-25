@@ -19,6 +19,7 @@ func (t *TableService) CreateTable(request models.CreateTableRequest) (*models.T
 		Number:       request.Number,
 		Capacity:     request.Capacity,
 		RestaurantID: request.RestaurantID,
+		Status:       "available",
 	}
 
 	err := t.gorm.Create(&table).Error
@@ -33,7 +34,7 @@ func (t *TableService) CreateTable(request models.CreateTableRequest) (*models.T
 func (t *TableService) GetAllTable() ([]models.Table, error) {
 	var tables []models.Table
 
-	err := t.gorm.Preload("Reservations").Find(&tables).Error
+	err := t.gorm.Where("status = ?", "available").Find(&tables).Error
 
 	if err != nil {
 		return nil, err
@@ -45,7 +46,7 @@ func (t *TableService) GetAllTable() ([]models.Table, error) {
 func (t *TableService) GetTableByID(id int) (*models.Table, error) {
 	var table models.Table
 
-	err := t.gorm.Where("id = ?", id).Preload("Reservations").First(&table).Error
+	err := t.gorm.Where("id = ?", id).First(&table).Error
 
 	if err != nil {
 		return nil, err
